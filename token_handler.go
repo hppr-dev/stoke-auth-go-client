@@ -27,6 +27,8 @@ type TokenHandler struct {
 	parserOpts []jwt.ParserOption
 }
 
+type stokeTokenCtxKey struct{}
+
 // Parses and injects the parsed token into the given context
 // Returns non-nil error on an invalid token
 func (w TokenHandler) InjectToken(token string, ctx context.Context) (context.Context, error) {
@@ -40,11 +42,11 @@ func (w TokenHandler) InjectToken(token string, ctx context.Context) (context.Co
 		return ctx, InvalidTokenError
 	}
 
-	return context.WithValue(ctx, "jwt.Token", jwtToken), nil
+	return context.WithValue(ctx, stokeTokenCtxKey{}, jwtToken), nil
 
 }
 
 // Gets the current JWT from the context
 func Token(ctx context.Context) *jwt.Token {
-	return ctx.Value("jwt.Token").(*jwt.Token)
+	return ctx.Value(stokeTokenCtxKey{}).(*jwt.Token)
 }
